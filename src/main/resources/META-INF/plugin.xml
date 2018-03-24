@@ -1,5 +1,5 @@
 <idea-plugin>
-    <id>de.winterstein.cleancode.clean-code</id>
+    <id>cleancode.clean-code</id>
     <name>Clean Code</name>
     <!--<vendor email="support@yourcompany.com" url="http://www.yourcompany.com">YourCompany</vendor>-->
 
@@ -15,6 +15,7 @@
 
     <extensions defaultExtensionNs="com.intellij">
         <!-- Add your extensions here -->
+        <inspectionToolProvider implementation="cleancode.nullreturn.NullReturnInspectionToolProvider"/>
     </extensions>
 
     <actions>
