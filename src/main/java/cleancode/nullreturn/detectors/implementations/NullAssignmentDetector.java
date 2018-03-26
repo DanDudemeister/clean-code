@@ -22,10 +22,14 @@ public class NullAssignmentDetector implements NullDetector {
         String variableName = getVariableNameFromAssignment();
         PsiMethod surroundingMethod = PsiUtils.findSurroundingMethod(assignmentExpression);
 
-        boolean isNullAssigned = PsiType.NULL.equals(assignmentExpression.getRExpression().getType());
-
-        return isNullAssigned && PsiUtils.isVariableReturnedByMethod(variableName, surroundingMethod);
+        return isNullAssigned() && PsiUtils.isVariableReturnedByMethod(variableName, surroundingMethod);
     }
+
+
+    private boolean isNullAssigned() {
+        return PsiType.NULL.equals(assignmentExpression.getRExpression().getType());
+    }
+
 
     private String getVariableNameFromAssignment() {
         return ((PsiReferenceExpressionImpl) assignmentExpression.getLExpression()).getReferenceName();
