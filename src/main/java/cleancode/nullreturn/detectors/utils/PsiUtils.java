@@ -1,5 +1,6 @@
-package cleancode.nullreturn.detectors;
+package cleancode.nullreturn.detectors.utils;
 
+import com.intellij.psi.PsiElement;
 import com.intellij.psi.PsiMethod;
 import com.intellij.psi.PsiReturnStatement;
 import com.intellij.psi.PsiType;
@@ -7,17 +8,9 @@ import com.intellij.psi.util.PsiTreeUtil;
 
 import java.util.Collection;
 
-public abstract class VariableReturner {
+public class PsiUtils {
     
-    private String variableName;
-    private PsiMethod surroundingMethod;
-
-    public VariableReturner(String variableName, PsiMethod surroundingMethod) {
-        this.variableName = variableName;
-        this.surroundingMethod = surroundingMethod;
-    }
-
-    protected boolean isVariableReturned() {
+    public static boolean isVariableReturnedByMethod(String variableName, PsiMethod surroundingMethod) {
         if (!PsiType.VOID.equals(surroundingMethod.getReturnType())) {
             Collection<PsiReturnStatement> returnStatements = PsiTreeUtil.findChildrenOfType(surroundingMethod, PsiReturnStatement.class);
             return returnStatements.stream()
@@ -27,5 +20,10 @@ public abstract class VariableReturner {
         }
 
         return false;
+    }
+
+
+    public static PsiMethod findSurroundingMethod(PsiElement psiElement) {
+        return PsiTreeUtil.getParentOfType(psiElement, PsiMethod.class);
     }
 }

@@ -1,14 +1,11 @@
 package cleancode.nullreturn;
 
 import cleancode.nullreturn.detectors.DetectorType;
-import cleancode.nullreturn.detectors.NullReturnDetectorFactory;
+import cleancode.nullreturn.detectors.NullDetectorFactory;
 import com.intellij.codeInspection.LocalQuickFix;
 import com.intellij.codeInspection.ProblemsHolder;
-import com.intellij.psi.JavaElementVisitor;
-import com.intellij.psi.PsiAssignmentExpression;
-import com.intellij.psi.PsiElement;
-import com.intellij.psi.PsiReturnStatement;
-import cleancode.nullreturn.detectors.NullReturnDetector;
+import com.intellij.psi.*;
+import cleancode.nullreturn.detectors.NullDetector;
 import org.jetbrains.annotations.NotNull;
 
 public class NullReturnInspection extends JavaElementVisitor {
@@ -23,22 +20,31 @@ public class NullReturnInspection extends JavaElementVisitor {
 
     @Override
     public void visitReturnStatement(PsiReturnStatement statement) {
-        NullReturnDetector nullReturnDetector = NullReturnDetectorFactory.getNullDetector(DetectorType.RETURN_STATEMENT, statement);
-        detectNullAndApplyQuickfixIfNecessary(nullReturnDetector, statement);
+        String inspectionMessage = "You should not return a null-literal";
+        NullDetector nullDetector = NullDetectorFactory.getNullDetector(DetectorType.RETURN_STATEMENT, statement);
+        detectNullAndApplyQuickfixIfNecessary(nullDetector, statement, inspectionMessage);
     }
 
 
     @Override
     public void visitAssignmentExpression(PsiAssignmentExpression expression) {
-        NullReturnDetector nullReturnDetector = NullReturnDetectorFactory.getNullDetector(DetectorType.ASSIGNMENT, expression);
-        detectNullAndApplyQuickfixIfNecessary(nullReturnDetector, expression);
+        String inspectionMessage = "You assign null to a variable which is returned later";
+        NullDetector nullDetector = NullDetectorFactory.getNullDetector(DetectorType.ASSIGNMENT, expression);
+        detectNullAndApplyQuickfixIfNecessary(nullDetector, expression, inspectionMessage);
     }
 
 
-    private void detectNullAndApplyQuickfixIfNecessary(NullReturnDetector nullReturnDetector, PsiElement psiElement) {
-        if (nullReturnDetector.possiblyReturnsNull()) {
-            LocalQuickFix quickFix = nullReturnDetector.getFix();
-            holder.registerProblem(psiElement, "Don't return null!", quickFix);
+    @Override
+    public void visitDeclarationStatement(PsiDeclarationStatement statement) {
+        String inspectionMessage = "You initialize a variable with null which is returned later";
+        NullDetector nullDetector = NullDetectorFactory.getNullDetector(DetectorType.DECLARATION, statement);
+        detectNullAndApplyQuickfixIfNecessary(nullDetector, statement, inspectionMessage);
+    }
+
+    private void detectNullAndApplyQuickfixIfNecessary(NullDetector nullDetector, PsiElement psiElement, String message) {
+        if (nullDetector.possiblyReturnsNull()) {
+            LocalQuickFix quickFix = nullDetector.getFix();
+            holder.registerProblem(psiElement, message, quickFix);
         }
     }
 }
