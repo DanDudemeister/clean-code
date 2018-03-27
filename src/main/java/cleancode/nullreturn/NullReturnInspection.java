@@ -43,7 +43,7 @@ public class NullReturnInspection extends JavaElementVisitor {
 
     private void detectNullAndApplyQuickfixIfNecessary(NullDetector nullDetector, PsiElement psiElement, String message) {
         if (nullDetector.possiblyReturnsNull()) {
-            LocalQuickFix quickFix = nullDetector.getFix();
+            LocalQuickFix quickFix = nullDetector.getQuickFix();
             holder.registerProblem(psiElement, message, quickFix);
         }
     }

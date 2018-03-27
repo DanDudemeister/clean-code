@@ -4,12 +4,13 @@ import cleancode.nullreturn.detectors.NullDetector;
 import com.intellij.psi.PsiReturnStatement;
 import com.intellij.psi.PsiType;
 
-public class NullReturnStatementDetector implements NullDetector {
+public class NullReturnStatementDetector extends NullDetector {
 
     private PsiReturnStatement returnStatement;
 
 
     public NullReturnStatementDetector(PsiReturnStatement returnStatement) {
+        super(returnStatement);
         this.returnStatement = returnStatement;
     }
 

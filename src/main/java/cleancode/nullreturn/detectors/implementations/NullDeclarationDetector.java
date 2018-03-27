@@ -1,7 +1,7 @@
 package cleancode.nullreturn.detectors.implementations;
 
 import cleancode.nullreturn.detectors.NullDetector;
-import cleancode.nullreturn.detectors.utils.PsiUtils;
+import cleancode.nullreturn.utils.PsiUtils;
 import com.intellij.psi.*;
 import com.intellij.psi.impl.source.tree.java.PsiIdentifierImpl;
 import com.intellij.psi.impl.source.tree.java.PsiLiteralExpressionImpl;
@@ -11,12 +11,13 @@ import java.util.List;
 import java.util.Optional;
 import java.util.stream.Collectors;
 
-public class NullDeclarationDetector implements NullDetector {
+public class NullDeclarationDetector extends NullDetector {
 
     private PsiDeclarationStatement statement;
 
 
     public NullDeclarationDetector(PsiDeclarationStatement statement) {
+        super(statement);
         this.statement = statement;
     }
 

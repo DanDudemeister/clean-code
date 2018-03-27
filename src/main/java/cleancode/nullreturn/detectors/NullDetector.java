@@ -1,29 +1,23 @@
 package cleancode.nullreturn.detectors;
 
+import cleancode.nullreturn.quickfixes.QuickFixFactory;
 import com.intellij.codeInspection.LocalQuickFix;
-import com.intellij.codeInspection.ProblemDescriptor;
-import com.intellij.openapi.project.Project;
-import org.jetbrains.annotations.Nls;
-import org.jetbrains.annotations.NotNull;
+import com.intellij.psi.PsiElement;
 
-public interface NullDetector {
+public abstract class NullDetector {
 
-    boolean possiblyReturnsNull();
+    private PsiElement inspectedElement;
 
-    default LocalQuickFix getFix() {
-        //TODO only temporal; will be replaced with concrete implementations later
-        return new LocalQuickFix() {
-            @Nls
-            @NotNull
-            @Override
-            public String getFamilyName() {
-                return "family name";
-            }
 
-            @Override
-            public void applyFix(@NotNull Project project, @NotNull ProblemDescriptor problemDescriptor) {
+    public NullDetector(PsiElement inspectedElement) {
+        this.inspectedElement = inspectedElement;
+    }
 
-            }
-        };
+
+    public abstract boolean possiblyReturnsNull();
+
+
+    public LocalQuickFix getQuickFix() {
+        return QuickFixFactory.getQuickFix(inspectedElement);
     };
 }

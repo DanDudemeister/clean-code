@@ -1,18 +1,19 @@
 package cleancode.nullreturn.detectors.implementations;
 
 import cleancode.nullreturn.detectors.NullDetector;
-import cleancode.nullreturn.detectors.utils.PsiUtils;
+import cleancode.nullreturn.utils.PsiUtils;
 import com.intellij.psi.PsiAssignmentExpression;
 import com.intellij.psi.PsiMethod;
 import com.intellij.psi.PsiType;
 import com.intellij.psi.impl.source.tree.java.PsiReferenceExpressionImpl;
 
-public class NullAssignmentDetector implements NullDetector {
+public class NullAssignmentDetector extends NullDetector {
 
     private PsiAssignmentExpression assignmentExpression;
 
 
     public NullAssignmentDetector(PsiAssignmentExpression assignmentExpression) {
+        super(assignmentExpression);
         this.assignmentExpression = assignmentExpression;
     }
 
