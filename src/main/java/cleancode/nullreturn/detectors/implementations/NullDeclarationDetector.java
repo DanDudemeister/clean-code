@@ -2,14 +2,14 @@ package cleancode.nullreturn.detectors.implementations;
 
 import cleancode.nullreturn.detectors.NullDetector;
 import cleancode.nullreturn.detectors.utils.PsiUtils;
-import com.intellij.psi.PsiDeclarationStatement;
-import com.intellij.psi.PsiMethod;
-import com.intellij.psi.PsiType;
+import com.intellij.psi.*;
 import com.intellij.psi.impl.source.tree.java.PsiIdentifierImpl;
 import com.intellij.psi.impl.source.tree.java.PsiLiteralExpressionImpl;
 
 import java.util.Arrays;
+import java.util.List;
 import java.util.Optional;
+import java.util.stream.Collectors;
 
 public class NullDeclarationDetector implements NullDetector {
 
@@ -23,29 +23,32 @@ public class NullDeclarationDetector implements NullDetector {
 
     @Override
     public boolean possiblyReturnsNull() {
-        String variableNameFromDeclaration = getVariableNameFromDeclaration();
+        List<String> variableNamesFromDeclaration = getVariableNamesFromDeclaration();
         PsiMethod surroundingMethod = PsiUtils.findSurroundingMethod(statement);
-        Optional<PsiLiteralExpressionImpl> assignedLiteral = getAssignedLiteral();
+        Optional<PsiLiteralExpressionImpl> assignedValue = getAssignedValue();
 
-        return assignedLiteral.isPresent() &&
-                isNullAssigned(assignedLiteral.get()) &&
-                PsiUtils.isVariableReturnedByMethod(variableNameFromDeclaration, surroundingMethod);
+        return assignedValue.isPresent() &&
+                isNullAssigned(assignedValue.get()) &&
+                isAnyOfDeclaredVariablesReturnedByMethod(variableNamesFromDeclaration, surroundingMethod);
 
     }
 
 
-    private String getVariableNameFromDeclaration() {
-        PsiIdentifierImpl psiIdentifier = (PsiIdentifierImpl) Arrays.stream(statement.getDeclaredElements()[0].getChildren())
+    private List<String> getVariableNamesFromDeclaration() {
+        return Arrays.stream(statement.getDeclaredElements())
+                .flatMap(declaredElement -> Arrays.stream(declaredElement.getChildren()))
                 .filter(psiElement -> psiElement instanceof PsiIdentifierImpl)
-                .findFirst()
-                .get();
-
-        return psiIdentifier.getText();
+                .map(PsiElement::getText)
+                .collect(Collectors.toList());
     }
 
 
-    private Optional<PsiLiteralExpressionImpl> getAssignedLiteral() {
-        return Arrays.stream(statement.getDeclaredElements()[0].getChildren())
+    private Optional<PsiLiteralExpressionImpl> getAssignedValue() {
+        PsiElement[] declaredElements = statement.getDeclaredElements();
+        int indexOfLastDeclaredElement = declaredElements.length - 1;
+        PsiElement lastDeclaredElement = declaredElements[indexOfLastDeclaredElement];
+
+        return Arrays.stream(lastDeclaredElement.getChildren())
                 .filter(psiElement -> psiElement instanceof PsiLiteralExpressionImpl)
                 .map(psiElement -> (PsiLiteralExpressionImpl) psiElement)
                 .findFirst();
@@ -54,5 +57,11 @@ public class NullDeclarationDetector implements NullDetector {
 
     private boolean isNullAssigned(PsiLiteralExpressionImpl psiLiteralExpression) {
         return PsiType.NULL.equals(psiLiteralExpression.getType());
+    }
+
+
+    private boolean isAnyOfDeclaredVariablesReturnedByMethod(List<String> variableNamesFromDeclaration, PsiMethod surroundingMethod) {
+        return variableNamesFromDeclaration.stream()
+                .anyMatch(variableName -> PsiUtils.isVariableReturnedByMethod(variableName, surroundingMethod));
     }
 }
