@@ -19,7 +19,7 @@ public class NullAssignmentDetector extends NullDetector {
 
 
     @Override
-    public boolean possiblyReturnsNull() {
+    public boolean isNullDetected() {
         String variableName = getVariableNameFromAssignment();
         PsiMethod surroundingMethod = PsiUtils.findSurroundingMethod(assignmentExpression);
 

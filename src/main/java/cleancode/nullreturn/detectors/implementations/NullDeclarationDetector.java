@@ -23,7 +23,7 @@ public class NullDeclarationDetector extends NullDetector {
 
 
     @Override
-    public boolean possiblyReturnsNull() {
+    public boolean isNullDetected() {
         List<String> variableNamesFromDeclaration = getVariableNamesFromDeclaration();
         PsiMethod surroundingMethod = PsiUtils.findSurroundingMethod(statement);
         Optional<PsiLiteralExpressionImpl> assignedValue = getAssignedValue();

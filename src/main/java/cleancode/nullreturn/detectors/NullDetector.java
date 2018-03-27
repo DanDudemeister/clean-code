@@ -14,7 +14,7 @@ public abstract class NullDetector {
     }
 
 
-    public abstract boolean possiblyReturnsNull();
+    public abstract boolean isNullDetected();
 
 
     public LocalQuickFix getQuickFix() {

@@ -16,7 +16,7 @@ public class NullReturnStatementDetector extends NullDetector {
 
 
     @Override
-    public boolean possiblyReturnsNull() {
+    public boolean isNullDetected() {
         return returnsNullLiteral();
     }
 
