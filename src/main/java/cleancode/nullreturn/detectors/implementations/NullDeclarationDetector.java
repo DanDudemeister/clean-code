@@ -4,7 +4,6 @@ import cleancode.nullreturn.detectors.NullDetector;
 import cleancode.nullreturn.utils.PsiUtils;
 import com.intellij.psi.*;
 import com.intellij.psi.impl.source.tree.java.PsiIdentifierImpl;
-import com.intellij.psi.impl.source.tree.java.PsiLiteralExpressionImpl;
 
 import java.util.Arrays;
 import java.util.List;
@@ -26,7 +25,7 @@ public class NullDeclarationDetector extends NullDetector {
     public boolean isNullDetected() {
         List<String> variableNamesFromDeclaration = getVariableNamesFromDeclaration();
         PsiMethod surroundingMethod = PsiUtils.findSurroundingMethod(statement);
-        Optional<PsiLiteralExpressionImpl> assignedValue = getAssignedValue();
+        Optional<PsiExpression> assignedValue = PsiUtils.getAssignedValueFromDeclaration(statement);
 
         return assignedValue.isPresent() &&
                 isNullAssigned(assignedValue.get()) &&
@@ -44,20 +43,8 @@ public class NullDeclarationDetector extends NullDetector {
     }
 
 
-    private Optional<PsiLiteralExpressionImpl> getAssignedValue() {
-        PsiElement[] declaredElements = statement.getDeclaredElements();
-        int indexOfLastDeclaredElement = declaredElements.length - 1;
-        PsiElement lastDeclaredElement = declaredElements[indexOfLastDeclaredElement];
-
-        return Arrays.stream(lastDeclaredElement.getChildren())
-                .filter(psiElement -> psiElement instanceof PsiLiteralExpressionImpl)
-                .map(psiElement -> (PsiLiteralExpressionImpl) psiElement)
-                .findFirst();
-    }
-
-
-    private boolean isNullAssigned(PsiLiteralExpressionImpl psiLiteralExpression) {
-        return PsiType.NULL.equals(psiLiteralExpression.getType());
+    private boolean isNullAssigned(PsiExpression psiExpression) {
+        return PsiType.NULL.equals(psiExpression.getType());
     }
 
 
