@@ -1,6 +1,6 @@
 package cleancode.nullreturn.quickfixes.implementations;
 
-import cleancode.nullreturn.utils.PsiUtils;
+import cleancode.utils.PsiUtils;
 import com.intellij.codeInspection.LocalQuickFix;
 import com.intellij.codeInspection.ProblemDescriptor;
 import com.intellij.openapi.project.Project;

@@ -1,7 +1,7 @@
 package cleancode.nullreturn.detectors.implementations;
 
 import cleancode.nullreturn.detectors.NullDetector;
-import cleancode.nullreturn.utils.PsiUtils;
+import cleancode.utils.PsiUtils;
 import com.intellij.psi.PsiAssignmentExpression;
 import com.intellij.psi.PsiMethod;
 import com.intellij.psi.PsiType;

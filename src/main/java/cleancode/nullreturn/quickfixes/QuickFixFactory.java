@@ -1,7 +1,7 @@
 package cleancode.nullreturn.quickfixes;
 
 import cleancode.nullreturn.quickfixes.implementations.EmptyStringQuickFix;
-import cleancode.nullreturn.utils.PsiUtils;
+import cleancode.utils.PsiUtils;
 import com.intellij.codeInspection.LocalQuickFix;
 import com.intellij.psi.PsiElement;
 import com.intellij.psi.PsiMethod;
