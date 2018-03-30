@@ -4,6 +4,8 @@ import cleancode.nullreturn.quickfixes.QuickFixFactory;
 import com.intellij.codeInspection.LocalQuickFix;
 import com.intellij.psi.PsiElement;
 
+import java.util.Optional;
+
 public abstract class NullDetector {
 
     private PsiElement inspectedElement;
@@ -17,7 +19,7 @@ public abstract class NullDetector {
     public abstract boolean isNullDetected();
 
 
-    public LocalQuickFix getQuickFix() {
+    public Optional<LocalQuickFix> getQuickFix() {
         return QuickFixFactory.getQuickFix(inspectedElement);
     };
 }

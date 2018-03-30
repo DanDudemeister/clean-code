@@ -1,12 +1,14 @@
 package cleancode.nullreturn;
 
 import cleancode.nullreturn.detectors.DetectorType;
+import cleancode.nullreturn.detectors.NullDetector;
 import cleancode.nullreturn.detectors.NullDetectorFactory;
 import com.intellij.codeInspection.LocalQuickFix;
 import com.intellij.codeInspection.ProblemsHolder;
 import com.intellij.psi.*;
-import cleancode.nullreturn.detectors.NullDetector;
 import org.jetbrains.annotations.NotNull;
+
+import java.util.Optional;
 
 public class NullReturnInspection extends JavaElementVisitor {
 
@@ -43,8 +45,8 @@ public class NullReturnInspection extends JavaElementVisitor {
 
     private void detectNullAndApplyQuickfixIfNecessary(NullDetector nullDetector, PsiElement psiElement, String message) {
         if (nullDetector.isNullDetected()) {
-            LocalQuickFix quickFix = nullDetector.getQuickFix();
-            holder.registerProblem(psiElement, message, quickFix);
+            Optional<LocalQuickFix> optionalQuickFix = nullDetector.getQuickFix();
+            optionalQuickFix.ifPresent(quickFix -> holder.registerProblem(psiElement, message, quickFix));
         }
     }
 }
