@@ -1,6 +1,8 @@
 package cleancode.utils;
 
+import com.intellij.openapi.project.Project;
 import com.intellij.psi.*;
+import com.intellij.psi.codeStyle.JavaCodeStyleManager;
 import com.intellij.psi.util.PsiTreeUtil;
 
 import java.util.*;
@@ -47,16 +49,23 @@ public class PsiUtils {
     public static Optional<PsiExpression> getAssignedOrReturnedExpressionFromElement(PsiElement element) {
         Optional<PsiExpression> expression = Optional.empty();
 
-        if (element instanceof PsiReturnStatement) {
-            expression = Optional.of(((PsiReturnStatement) element).getReturnValue());
+        if (element != null) {
+            if (element instanceof PsiReturnStatement) {
+                expression = Optional.of(((PsiReturnStatement) element).getReturnValue());
 
-        } else if (element instanceof PsiAssignmentExpression) {
-            expression = Optional.of(((PsiAssignmentExpression) element).getRExpression());
+            } else if (element instanceof PsiAssignmentExpression) {
+                expression = Optional.of(((PsiAssignmentExpression) element).getRExpression());
 
-        } else if (element instanceof PsiDeclarationStatement) {
-            expression = PsiUtils.getAssignedValueFromDeclaration((PsiDeclarationStatement) element);
+            } else if (element instanceof PsiDeclarationStatement) {
+                expression = PsiUtils.getAssignedValueFromDeclaration((PsiDeclarationStatement) element);
+            }
         }
 
         return expression;
+    }
+
+
+    public static PsiElement replaceFullyQualifiedNameWithImport(PsiElement psiElementWithFullyQualifiedClassNames, Project project) {
+        return JavaCodeStyleManager.getInstance(project).shortenClassReferences(psiElementWithFullyQualifiedClassNames);
     }
 }

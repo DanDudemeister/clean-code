@@ -1,6 +1,6 @@
 package cleancode.nullreturn.quickfixes;
 
-import cleancode.nullreturn.quickfixes.implementations.EmptyListQuickFix;
+import cleancode.nullreturn.quickfixes.implementations.collections.EmptyListQuickFix;
 import cleancode.nullreturn.quickfixes.implementations.EmptyStringQuickFix;
 import cleancode.utils.PsiUtils;
 import com.intellij.codeInspection.LocalQuickFix;
