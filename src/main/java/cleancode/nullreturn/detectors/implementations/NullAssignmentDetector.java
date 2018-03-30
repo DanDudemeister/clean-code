@@ -3,6 +3,7 @@ package cleancode.nullreturn.detectors.implementations;
 import cleancode.nullreturn.detectors.NullDetector;
 import cleancode.utils.PsiUtils;
 import com.intellij.psi.PsiAssignmentExpression;
+import com.intellij.psi.PsiExpression;
 import com.intellij.psi.PsiMethod;
 import com.intellij.psi.PsiType;
 import com.intellij.psi.impl.source.tree.java.PsiReferenceExpressionImpl;
@@ -28,7 +29,8 @@ public class NullAssignmentDetector extends NullDetector {
 
 
     private boolean isNullAssigned() {
-        return PsiType.NULL.equals(assignmentExpression.getRExpression().getType());
+        PsiExpression rightExpression = assignmentExpression.getRExpression();
+        return rightExpression != null && PsiType.NULL.equals(rightExpression.getType());
     }
 
 

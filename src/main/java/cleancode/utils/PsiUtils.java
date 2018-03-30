@@ -11,9 +11,10 @@ public class PsiUtils {
         if (!PsiType.VOID.equals(surroundingMethod.getReturnType())) {
             Collection<PsiReturnStatement> returnStatements = PsiTreeUtil.findChildrenOfType(surroundingMethod, PsiReturnStatement.class);
             return returnStatements.stream()
-                    .anyMatch(returnStatement ->
-                            variableName.equals(returnStatement.getReturnValue().getText())
-                    );
+                    .anyMatch(returnStatement -> {
+                        PsiExpression returnValue = returnStatement.getReturnValue();
+                        return returnValue != null && variableName.equals(returnValue.getText());
+                    });
         }
 
         return false;
@@ -26,14 +27,20 @@ public class PsiUtils {
 
 
     public static Optional<PsiExpression> getAssignedValueFromDeclaration(PsiDeclarationStatement statement) {
+        Optional<PsiExpression> assignedValue = Optional.empty();
         PsiElement[] declaredElements = statement.getDeclaredElements();
-        int indexOfLastDeclaredElement = declaredElements.length - 1;
-        PsiElement lastDeclaredElement = declaredElements[indexOfLastDeclaredElement];
 
-        return Arrays.stream(lastDeclaredElement.getChildren())
-                .filter(psiElement -> psiElement instanceof PsiLiteralExpression)
-                .map(psiElement -> (PsiExpression) psiElement)
-                .findFirst();
+        if (declaredElements.length > 0) {
+            int indexOfLastDeclaredElement = declaredElements.length - 1;
+            PsiElement lastDeclaredElement = declaredElements[indexOfLastDeclaredElement];
+
+            assignedValue = Arrays.stream(lastDeclaredElement.getChildren())
+                    .filter(psiElement -> psiElement instanceof PsiLiteralExpression)
+                    .map(psiElement -> (PsiExpression) psiElement)
+                    .findFirst();
+        }
+
+        return assignedValue;
     }
 
 

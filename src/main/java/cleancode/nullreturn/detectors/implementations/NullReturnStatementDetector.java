@@ -1,6 +1,7 @@
 package cleancode.nullreturn.detectors.implementations;
 
 import cleancode.nullreturn.detectors.NullDetector;
+import com.intellij.psi.PsiExpression;
 import com.intellij.psi.PsiReturnStatement;
 import com.intellij.psi.PsiType;
 
@@ -22,7 +23,7 @@ public class NullReturnStatementDetector extends NullDetector {
 
 
     private boolean returnsNullLiteral() {
-        PsiType returnValueType = returnStatement.getReturnValue().getType();
-        return PsiType.NULL.equals(returnValueType);
+        PsiExpression returnValue = returnStatement.getReturnValue();
+        return returnValue != null && PsiType.NULL.equals(returnValue.getType());
     }
 }
