@@ -1,4 +1,4 @@
-package cleancode.nullreturn.quickfixes.implementations;
+package cleancode.nullreturn.quickfixes.implementations.string;
 
 import cleancode.utils.PsiUtils;
 import com.intellij.codeInspection.LocalQuickFix;

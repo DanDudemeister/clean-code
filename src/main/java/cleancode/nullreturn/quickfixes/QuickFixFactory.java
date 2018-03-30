@@ -1,7 +1,7 @@
 package cleancode.nullreturn.quickfixes;
 
 import cleancode.nullreturn.quickfixes.implementations.collections.EmptyListQuickFix;
-import cleancode.nullreturn.quickfixes.implementations.EmptyStringQuickFix;
+import cleancode.nullreturn.quickfixes.implementations.string.EmptyStringQuickFix;
 import cleancode.nullreturn.quickfixes.implementations.collections.EmptyMapQuickFix;
 import cleancode.nullreturn.quickfixes.implementations.collections.EmptySetQuickFix;
 import cleancode.utils.PsiUtils;
