@@ -2,6 +2,7 @@ package cleancode.nullreturn.quickfixes;
 
 import cleancode.nullreturn.quickfixes.implementations.collections.EmptyListQuickFix;
 import cleancode.nullreturn.quickfixes.implementations.EmptyStringQuickFix;
+import cleancode.nullreturn.quickfixes.implementations.collections.EmptyMapQuickFix;
 import cleancode.utils.PsiUtils;
 import com.intellij.codeInspection.LocalQuickFix;
 import com.intellij.psi.PsiElement;
@@ -14,6 +15,7 @@ public class QuickFixFactory {
 
     private static final String JAVA_LANG_STRING = "java.lang.String";
     private static final String JAVA_UTIL_LIST_REGEX = "^(java.util.List<).*(>)$";
+    private static final String JAVA_UTIL_MAP_REGEX = "^(java.util.Map<).*(>)$";
 
 
     public static Optional<LocalQuickFix> getQuickFix(PsiElement psiElement) {
@@ -30,6 +32,9 @@ public class QuickFixFactory {
 
             } else if (returnTypeAsText.matches(JAVA_UTIL_LIST_REGEX)) {
                 return Optional.of(new EmptyListQuickFix());
+
+            } else if (returnTypeAsText.matches(JAVA_UTIL_MAP_REGEX)) {
+                return Optional.of(new EmptyMapQuickFix());
             }
         }
 
