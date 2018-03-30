@@ -28,13 +28,13 @@ public class NullAssignmentDetector extends NullDetector {
     }
 
 
-    private boolean isNullAssigned() {
-        PsiExpression rightExpression = assignmentExpression.getRExpression();
-        return rightExpression != null && PsiType.NULL.equals(rightExpression.getType());
+    private String getVariableNameFromAssignment() {
+        return ((PsiReferenceExpressionImpl) assignmentExpression.getLExpression()).getReferenceName();
     }
 
 
-    private String getVariableNameFromAssignment() {
-        return ((PsiReferenceExpressionImpl) assignmentExpression.getLExpression()).getReferenceName();
+    private boolean isNullAssigned() {
+        PsiExpression assignedValue = PsiUtils.getAssignedValueRecursively(assignmentExpression.getRExpression());
+        return assignedValue != null && PsiType.NULL.equals(assignedValue.getType());
     }
 }

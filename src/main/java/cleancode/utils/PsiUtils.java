@@ -54,14 +54,24 @@ public class PsiUtils {
                 expression = Optional.of(((PsiReturnStatement) element).getReturnValue());
 
             } else if (element instanceof PsiAssignmentExpression) {
-                expression = Optional.of(((PsiAssignmentExpression) element).getRExpression());
+                expression = Optional.of(
+                    getAssignedValueRecursively(((PsiAssignmentExpression) element).getRExpression()));
 
             } else if (element instanceof PsiDeclarationStatement) {
-                expression = PsiUtils.getAssignedValueFromDeclaration((PsiDeclarationStatement) element);
+                expression = getAssignedValueFromDeclaration((PsiDeclarationStatement) element);
             }
         }
 
         return expression;
+    }
+
+
+    public static PsiExpression getAssignedValueRecursively(PsiExpression expression) {
+        if (expression instanceof PsiAssignmentExpression) {
+            return getAssignedValueRecursively(((PsiAssignmentExpression) expression).getRExpression());
+        } else {
+            return expression;
+        }
     }
 
 
