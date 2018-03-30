@@ -28,7 +28,7 @@ public class EmptySetQuickFix extends EmptyCollectionQuickFix {
 
     @NotNull
     private PsiExpression getEmptySetExpression(Project project) {
-        return PsiElementFactory.SERVICE.getInstance(project).createExpressionFromText(
-            EMPTY_SET_TEXT, null);
+        return PsiElementFactory.SERVICE.getInstance(project)
+            .createExpressionFromText(EMPTY_SET_TEXT, null);
     }
 }

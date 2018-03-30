@@ -28,7 +28,7 @@ public class EmptyMapQuickFix extends EmptyCollectionQuickFix {
 
     @NotNull
     private PsiExpression getEmptyMapExpression(Project project) {
-        return PsiElementFactory.SERVICE.getInstance(project).createExpressionFromText(
-            EMPTY_MAP_TEXT, null);
+        return PsiElementFactory.SERVICE.getInstance(project)
+            .createExpressionFromText(EMPTY_MAP_TEXT, null);
     }
 }

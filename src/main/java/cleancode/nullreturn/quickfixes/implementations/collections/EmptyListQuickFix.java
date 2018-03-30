@@ -28,6 +28,7 @@ public class EmptyListQuickFix extends EmptyCollectionQuickFix {
 
     @NotNull
     private PsiExpression getEmptyListExpression(Project project) {
-        return PsiElementFactory.SERVICE.getInstance(project).createExpressionFromText(EMPTY_LIST_TEXT, null);
+        return PsiElementFactory.SERVICE.getInstance(project)
+            .createExpressionFromText(EMPTY_LIST_TEXT, null);
     }
 }
