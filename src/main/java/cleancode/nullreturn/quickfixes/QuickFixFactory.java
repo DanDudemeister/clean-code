@@ -1,6 +1,7 @@
 package cleancode.nullreturn.quickfixes;
 
 import cleancode.nullreturn.quickfixes.implementations.collections.EmptyListQuickFix;
+import cleancode.nullreturn.quickfixes.implementations.optional.OptionalQuickFix;
 import cleancode.nullreturn.quickfixes.implementations.string.EmptyStringQuickFix;
 import cleancode.nullreturn.quickfixes.implementations.collections.EmptyMapQuickFix;
 import cleancode.nullreturn.quickfixes.implementations.collections.EmptySetQuickFix;
@@ -40,6 +41,9 @@ public class QuickFixFactory {
 
             } else if (returnTypeAsText.matches(JAVA_UTIL_SET_REGEX)) {
                 return Optional.of(new EmptySetQuickFix());
+
+            } else {
+                return Optional.of(new OptionalQuickFix());
             }
         }
 

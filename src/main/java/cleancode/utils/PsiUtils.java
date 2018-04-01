@@ -1,11 +1,21 @@
 package cleancode.utils;
 
 import com.intellij.openapi.project.Project;
-import com.intellij.psi.*;
+import com.intellij.psi.PsiAssignmentExpression;
+import com.intellij.psi.PsiDeclarationStatement;
+import com.intellij.psi.PsiElement;
+import com.intellij.psi.PsiExpression;
+import com.intellij.psi.PsiLiteralExpression;
+import com.intellij.psi.PsiMethod;
+import com.intellij.psi.PsiReference;
+import com.intellij.psi.PsiReturnStatement;
+import com.intellij.psi.PsiType;
 import com.intellij.psi.codeStyle.JavaCodeStyleManager;
+import com.intellij.psi.search.searches.ReferencesSearch;
 import com.intellij.psi.util.PsiTreeUtil;
-
-import java.util.*;
+import java.util.Arrays;
+import java.util.Collection;
+import java.util.Optional;
 
 public class PsiUtils {
     
@@ -77,5 +87,10 @@ public class PsiUtils {
 
     public static PsiElement replaceFullyQualifiedNameWithImport(PsiElement psiElementWithFullyQualifiedClassNames, Project project) {
         return JavaCodeStyleManager.getInstance(project).shortenClassReferences(psiElementWithFullyQualifiedClassNames);
+    }
+
+
+    public static Collection<PsiReference> findUsagesOfMethod(PsiMethod method) {
+        return ReferencesSearch.search(method).findAll();
     }
 }

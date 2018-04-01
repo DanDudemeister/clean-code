@@ -29,7 +29,14 @@ public class NullAssignmentDetector extends NullDetector {
 
 
     private String getVariableNameFromAssignment() {
-        return ((PsiReferenceExpressionImpl) assignmentExpression.getLExpression()).getReferenceName();
+        PsiExpression leftExpression = assignmentExpression.getLExpression();
+
+        //TODO linke Seite Arrayzugriff?
+        if (leftExpression instanceof PsiReferenceExpressionImpl) {
+            return ((PsiReferenceExpressionImpl) leftExpression).getReferenceName();
+        }
+
+        return "";
     }
 
 

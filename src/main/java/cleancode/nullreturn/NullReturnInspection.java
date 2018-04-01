@@ -5,10 +5,13 @@ import cleancode.nullreturn.detectors.NullDetector;
 import cleancode.nullreturn.detectors.NullDetectorFactory;
 import com.intellij.codeInspection.LocalQuickFix;
 import com.intellij.codeInspection.ProblemsHolder;
-import com.intellij.psi.*;
-import org.jetbrains.annotations.NotNull;
-
+import com.intellij.psi.JavaElementVisitor;
+import com.intellij.psi.PsiAssignmentExpression;
+import com.intellij.psi.PsiDeclarationStatement;
+import com.intellij.psi.PsiElement;
+import com.intellij.psi.PsiReturnStatement;
 import java.util.Optional;
+import org.jetbrains.annotations.NotNull;
 
 public class NullReturnInspection extends JavaElementVisitor {
 
@@ -34,7 +37,6 @@ public class NullReturnInspection extends JavaElementVisitor {
         NullDetector nullDetector = NullDetectorFactory.getNullDetector(DetectorType.ASSIGNMENT, expression);
         detectNullAndApplyQuickfixIfNecessary(nullDetector, expression, inspectionMessage);
     }
-
 
     @Override
     public void visitDeclarationStatement(PsiDeclarationStatement statement) {
