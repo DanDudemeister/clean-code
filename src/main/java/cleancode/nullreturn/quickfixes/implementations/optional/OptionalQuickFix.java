@@ -19,6 +19,7 @@ import com.intellij.psi.PsiReference;
 import com.intellij.psi.PsiReferenceExpression;
 import com.intellij.psi.PsiReturnStatement;
 import com.intellij.psi.PsiType;
+import com.intellij.psi.PsiWhiteSpace;
 import com.intellij.psi.util.PsiTreeUtil;
 import java.lang.reflect.Method;
 import java.lang.reflect.Modifier;
@@ -103,12 +104,13 @@ public class OptionalQuickFix implements LocalQuickFix {
             String currentlyCalledMethodName = getNameOfCurrentlyCalledMethod(psiReference.getElement());
 
             boolean onRightSideOfAnAssignment = isOnRightSideOfAnAssignment(psiReference.getElement());
-            boolean alreadyAssignedAsOptional = true;
-            if (onRightSideOfAnAssignment) {
-                alreadyAssignedAsOptional = isAlreadyAssignedAsOptional(psiReference);
-            }
+            boolean adaptUsage;
 
-            boolean adaptUsage = !alreadyAssignedAsOptional && !doesMethodNameMatchAnyOfOptionalClassMethodNames(currentlyCalledMethodName);
+            if (onRightSideOfAnAssignment) {
+                adaptUsage = !isAlreadyAssignedAsOptional(psiReference) && !doesMethodNameMatchAnyOfOptionalClassMethodNames(currentlyCalledMethodName);
+            } else {
+                adaptUsage = !doesMethodNameMatchAnyOfOptionalClassMethodNames(currentlyCalledMethodName);
+            }
 
             if (adaptUsage) {
                 String methodCallAsText = parentElementWhichContainsMethodCallChain.getText();
@@ -119,19 +121,25 @@ public class OptionalQuickFix implements LocalQuickFix {
                     .replaceFullyQualifiedNameWithImport(newReturnedValue, project);
                 parentElementWhichContainsMethodCallChain.replace(newMethodCall);
             }
-
         });
     }
 
-    //TODO funktioniert noch nicht bei Deklarationen, nur bei Assignments
+
     private boolean isOnRightSideOfAnAssignment(PsiElement element) {
-        PsiLocalVariable localVariable = PsiTreeUtil
-            .getParentOfType(element, PsiLocalVariable.class, true, PsiCodeBlock.class);
-        return localVariable != null;
+        PsiLocalVariable localVariable = null;
+        PsiAssignmentExpression assignment = null;
+
+        localVariable = PsiTreeUtil.getParentOfType(element, PsiLocalVariable.class, true, PsiCodeBlock.class);
+
+        if (localVariable == null) {
+            assignment = PsiTreeUtil.getParentOfType(element, PsiAssignmentExpression.class, true, PsiCodeBlock.class);
+        }
+
+        return localVariable != null || assignment != null;
     }
 
 
-    //TODO kann noch nicht mit Zeilenumbrüchen umgehen
+    //TODO vielleicht besserer Algorithmus nötig, der nicht jeden Charakter betrachtet, sondern auf Typen prüft
     private String getNameOfCurrentlyCalledMethod(PsiElement psiElement) {
         String currentlyCalledMethodName = "";
         PsiElement currentElement = PsiTreeUtil.nextLeaf(psiElement);
@@ -141,10 +149,13 @@ public class OptionalQuickFix implements LocalQuickFix {
         }
 
         PsiElement closingBrackets = currentElement;
-        PsiElement elementAfterClosingBrackets = PsiTreeUtil.nextLeaf(currentElement);
+        PsiElement elementAfterClosingBrackets = PsiTreeUtil.nextLeaf(closingBrackets);
+
+        while (elementAfterClosingBrackets instanceof PsiWhiteSpace) {
+            elementAfterClosingBrackets = PsiTreeUtil.nextLeaf(elementAfterClosingBrackets);
+        }
 
         if (".".equals(elementAfterClosingBrackets.getText())) {
-            //TODO Zeilenumbruch beachten!!!
             currentlyCalledMethodName = PsiTreeUtil.nextLeaf(PsiTreeUtil.nextLeaf(elementAfterClosingBrackets)).getText();
         }
 
@@ -153,10 +164,10 @@ public class OptionalQuickFix implements LocalQuickFix {
 
 
     private PsiElement getParentElementWhichContainsMethodCallChain(PsiReference psiReference) {
-        PsiElement parent = PsiTreeUtil.findFirstParent(psiReference.getElement(),
-            psiElement -> psiElement instanceof PsiMethodCallExpression);
-        // TODO: was ist mit längerer Call-Kette (a.b.c().orElse(null);)? Rekursiv nach oben suchen()
-        // TODO: Aufruf in nem if/switch? Gibt's noch andere Fälle?
+        PsiElement parent = PsiTreeUtil.findFirstParent(
+            psiReference.getElement(),
+            psiElement -> psiElement instanceof PsiMethodCallExpression
+        );
         PsiElement grandParent = parent.getParent();
 
         return grandParent instanceof PsiAssignmentExpression ? grandParent : parent;
@@ -175,6 +186,9 @@ public class OptionalQuickFix implements LocalQuickFix {
 
         } else if (psiElement instanceof PsiField) {
             return ((PsiField) psiElement).getType();
+
+        } else if (psiElement instanceof PsiAssignmentExpression) {
+            return ((PsiAssignmentExpression) psiElement).getLExpression().getType();
 
         } else {
             return getTypeOfAssignedVariableFromElementRecursively(psiElement.getParent());
