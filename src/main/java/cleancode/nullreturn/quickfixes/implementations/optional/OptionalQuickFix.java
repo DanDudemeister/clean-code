@@ -156,6 +156,7 @@ public class OptionalQuickFix implements LocalQuickFix {
         }
 
         if (".".equals(elementAfterClosingBrackets.getText())) {
+            //TODO Der Fall a. \n orElse() geht noch nicht!
             currentlyCalledMethodName = PsiTreeUtil.nextLeaf(PsiTreeUtil.nextLeaf(elementAfterClosingBrackets)).getText();
         }
 
