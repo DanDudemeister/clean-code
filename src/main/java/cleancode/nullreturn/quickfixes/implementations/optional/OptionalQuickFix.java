@@ -75,7 +75,7 @@ public class OptionalQuickFix implements LocalQuickFix {
         usagesOfMethod = PsiUtils.findUsagesOfMethod(surroundingMethod);
         adaptUsagesIfNecessary(project, usagesOfMethod);
 
-        // add "generated" TODOs
+        //TODO: add "generated" TODOs
         adaptReturnTypeIfNecessary(project, surroundingMethod);
     }
 
