@@ -156,10 +156,10 @@ public class OptionalQuickFix implements LocalQuickFix {
     }
 
 
-    private String extractMethodNameFromMethodCallExpression(PsiMethodCallExpression enclosingMethodCallExpression) {
+    private String extractMethodNameFromMethodCallExpression(PsiMethodCallExpression methodCallExpression) {
         String methodName = "";
 
-        PsiElement[] children = enclosingMethodCallExpression.getMethodExpression().getChildren();
+        PsiElement[] children = methodCallExpression.getMethodExpression().getChildren();
 
         Optional<PsiElement> first = Arrays.stream(children)
             .filter(child -> child instanceof PsiIdentifier)
