@@ -34,9 +34,11 @@ import org.jetbrains.annotations.NotNull;
 public class OptionalQuickFix implements LocalQuickFix {
 
     private static final String QUICK_FIX_NAME = "Replace null with optional";
+    private static final String NULL = "null";
     private static final String JAVA_UTIL_OPTIONAL_FULL_QUALIFIED_REGEX = "^(java.util.Optional<).*(>)$";
     private static final String JAVA_UTIL_OPTIONAL_SHORTENED_REGEX = "^(Optional<).*(>)$";
     private static final String OF_NULLABLE_TEMPLATE = "java.util.Optional.ofNullable(" + StringUtils.PLACEHOLDER + ")";
+    private static final String JAVA_UTIL_OPTIONAL_EMPTY = "java.util.Optional.empty()";
     private static final String OPTIONAL_TEMPLATE = "Optional<" + StringUtils.PLACEHOLDER + ">";
     private static final String OR_ELSE_NULL = ".orElse(null)";
 
@@ -98,17 +100,28 @@ public class OptionalQuickFix implements LocalQuickFix {
     }
 
 
-    //TODO Optional.empty(), if null! (instead of Optional.ofNullable(null))
     private void replaceAllReturnedValuesWithOptionalIfNecessary(@NotNull Project project, List<PsiExpression> assignedOrReturnedValues) {
         assignedOrReturnedValues.forEach(returnedValue -> {
             if (returnedValue.getType() != null && !returnedValue.getType().getCanonicalText().matches(JAVA_UTIL_OPTIONAL_FULL_QUALIFIED_REGEX)) {
-                String returnedValueAsText = returnedValue.getText();
-                returnedValueAsText = StringUtils.insertStringIntoTemplate(returnedValueAsText, OF_NULLABLE_TEMPLATE);
+                String returnedValueAsText = getReturnedValueAsText(returnedValue);
                 PsiExpression newReturnedValue = SERVICE.getInstance(project).createExpressionFromText(returnedValueAsText, null);
                 PsiElement newReturnedValueWithImport = PsiUtils.replaceFullyQualifiedNameWithImport(newReturnedValue, project);
                 returnedValue.replace(newReturnedValueWithImport);
             }
         });
+    }
+
+
+    private String getReturnedValueAsText(PsiExpression returnedValue) {
+        String returnedValueAsText = returnedValue.getText();
+
+        if (NULL.equals(returnedValueAsText)) {
+            returnedValueAsText = JAVA_UTIL_OPTIONAL_EMPTY;
+        } else {
+            returnedValueAsText = StringUtils.insertStringIntoTemplate(returnedValueAsText, OF_NULLABLE_TEMPLATE);
+        }
+
+        return returnedValueAsText;
     }
 
 
