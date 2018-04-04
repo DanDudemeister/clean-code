@@ -9,13 +9,14 @@ import com.intellij.psi.PsiAssignmentExpression;
 import com.intellij.psi.PsiElement;
 import com.intellij.psi.PsiElementFactory.SERVICE;
 import com.intellij.psi.PsiExpression;
+import com.intellij.psi.PsiIdentifier;
 import com.intellij.psi.PsiMethod;
 import com.intellij.psi.PsiMethodCallExpression;
 import com.intellij.psi.PsiMethodReferenceExpression;
 import com.intellij.psi.PsiReference;
 import com.intellij.psi.PsiReturnStatement;
 import com.intellij.psi.PsiType;
-import com.intellij.psi.PsiWhiteSpace;
+import com.intellij.psi.impl.source.tree.java.PsiMethodCallExpressionImpl;
 import com.intellij.psi.impl.source.tree.java.PsiReferenceExpressionImpl;
 import com.intellij.psi.util.PsiTreeUtil;
 import com.intellij.refactoring.util.LambdaRefactoringUtil;
@@ -146,23 +147,19 @@ public class OptionalQuickFix implements LocalQuickFix {
 
     private String getNameOfCurrentlyCalledMethod(PsiElement psiElement) {
         String currentlyCalledMethodName = "";
+        PsiElement enclosingMethodCallExpression = psiElement.getParent().getParent().getParent();
 
-        PsiElement currentElement = PsiTreeUtil.nextLeaf(psiElement);
+        if (enclosingMethodCallExpression instanceof PsiMethodCallExpression) {
+            PsiElement[] children = ((PsiMethodCallExpressionImpl) enclosingMethodCallExpression)
+                .getMethodExpression().getChildren();
 
-        while (!")".equals(currentElement.getText())) {
-            currentElement = PsiTreeUtil.nextLeaf(currentElement);
-        }
+            Optional<PsiElement> first = Arrays.stream(children)
+                .filter(child -> child instanceof PsiIdentifier)
+                .findFirst();
 
-        PsiElement closingBrackets = currentElement;
-        PsiElement elementAfterClosingBrackets = PsiTreeUtil.nextLeaf(closingBrackets);
-
-        while (elementAfterClosingBrackets instanceof PsiWhiteSpace) {
-            elementAfterClosingBrackets = PsiTreeUtil.nextLeaf(elementAfterClosingBrackets);
-        }
-
-        if (".".equals(elementAfterClosingBrackets.getText())) {
-            //TODO Doesn't work if there's a new line after the dot (a. \n orElse())
-            currentlyCalledMethodName = PsiTreeUtil.nextLeaf(PsiTreeUtil.nextLeaf(elementAfterClosingBrackets)).getText();
+            if (first.isPresent()) {
+                currentlyCalledMethodName = first.get().getText();
+            }
         }
 
         return currentlyCalledMethodName;
