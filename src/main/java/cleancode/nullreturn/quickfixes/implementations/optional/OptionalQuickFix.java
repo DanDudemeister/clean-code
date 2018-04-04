@@ -16,7 +16,6 @@ import com.intellij.psi.PsiMethodReferenceExpression;
 import com.intellij.psi.PsiReference;
 import com.intellij.psi.PsiReturnStatement;
 import com.intellij.psi.PsiType;
-import com.intellij.psi.impl.source.tree.java.PsiMethodCallExpressionImpl;
 import com.intellij.psi.impl.source.tree.java.PsiReferenceExpressionImpl;
 import com.intellij.psi.util.PsiTreeUtil;
 import com.intellij.refactoring.util.LambdaRefactoringUtil;
@@ -150,19 +149,27 @@ public class OptionalQuickFix implements LocalQuickFix {
         PsiElement enclosingMethodCallExpression = psiElement.getParent().getParent().getParent();
 
         if (enclosingMethodCallExpression instanceof PsiMethodCallExpression) {
-            PsiElement[] children = ((PsiMethodCallExpressionImpl) enclosingMethodCallExpression)
-                .getMethodExpression().getChildren();
-
-            Optional<PsiElement> first = Arrays.stream(children)
-                .filter(child -> child instanceof PsiIdentifier)
-                .findFirst();
-
-            if (first.isPresent()) {
-                currentlyCalledMethodName = first.get().getText();
-            }
+            currentlyCalledMethodName = extractMethodNameFromMethodCallExpression((PsiMethodCallExpression) enclosingMethodCallExpression);
         }
 
         return currentlyCalledMethodName;
+    }
+
+
+    private String extractMethodNameFromMethodCallExpression(PsiMethodCallExpression enclosingMethodCallExpression) {
+        String methodName = "";
+
+        PsiElement[] children = enclosingMethodCallExpression.getMethodExpression().getChildren();
+
+        Optional<PsiElement> first = Arrays.stream(children)
+            .filter(child -> child instanceof PsiIdentifier)
+            .findFirst();
+
+        if (first.isPresent()) {
+            methodName = first.get().getText();
+        }
+
+        return methodName;
     }
 
 
