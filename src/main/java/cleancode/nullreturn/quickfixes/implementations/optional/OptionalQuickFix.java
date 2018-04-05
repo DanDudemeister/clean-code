@@ -2,6 +2,7 @@ package cleancode.nullreturn.quickfixes.implementations.optional;
 
 import cleancode.utils.PsiUtils;
 import cleancode.utils.StringUtils;
+import com.intellij.codeInspection.LambdaCanBeMethodReferenceInspection;
 import com.intellij.codeInspection.LocalQuickFix;
 import com.intellij.codeInspection.ProblemDescriptor;
 import com.intellij.openapi.project.Project;
@@ -10,6 +11,7 @@ import com.intellij.psi.PsiElement;
 import com.intellij.psi.PsiElementFactory.SERVICE;
 import com.intellij.psi.PsiExpression;
 import com.intellij.psi.PsiIdentifier;
+import com.intellij.psi.PsiLambdaExpression;
 import com.intellij.psi.PsiMethod;
 import com.intellij.psi.PsiMethodCallExpression;
 import com.intellij.psi.PsiMethodReferenceExpression;
@@ -22,6 +24,7 @@ import com.intellij.refactoring.util.LambdaRefactoringUtil;
 import com.siyeh.ig.psiutils.ExpectedTypeUtils;
 import java.lang.reflect.Method;
 import java.lang.reflect.Modifier;
+import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collection;
 import java.util.List;
@@ -41,6 +44,8 @@ public class OptionalQuickFix implements LocalQuickFix {
     private static final String JAVA_UTIL_OPTIONAL_EMPTY = "java.util.Optional.empty()";
     private static final String OPTIONAL_TEMPLATE = "Optional<" + StringUtils.PLACEHOLDER + ">";
     private static final String OR_ELSE_NULL = ".orElse(null)";
+
+    private List<PsiLambdaExpression> lambdaExpressions;
 
 
     @Nls
@@ -69,12 +74,14 @@ public class OptionalQuickFix implements LocalQuickFix {
         replaceAllReturnedValuesWithOptionalIfNecessary(project, assignedOrReturnedValues);
 
         Collection<PsiReference> usagesOfMethod = PsiUtils.findUsagesOfMethod(surroundingMethod);
+
         List<PsiMethodReferenceExpression> java8MethodReferences = findJava8MethodReferences(usagesOfMethod);
-        //TODO only expand method-reference if an adaption is necessary
-        convertMethodReferencesToLambda(java8MethodReferences);
+        convertMethodReferencesToLambdasAndStoreLambdas(java8MethodReferences);
 
         usagesOfMethod = PsiUtils.findUsagesOfMethod(surroundingMethod);
         adaptUsagesIfNecessary(project, usagesOfMethod);
+
+        convertStoredLambdasBackToMethodReferencesIfPossible();
 
         //TODO: add "generated" TODOs
         adaptReturnTypeIfNecessary(project, surroundingMethod);
@@ -95,8 +102,11 @@ public class OptionalQuickFix implements LocalQuickFix {
     }
 
 
-    private void convertMethodReferencesToLambda(List<PsiMethodReferenceExpression> java8MethodReferences) {
-        java8MethodReferences.forEach(psiReference -> LambdaRefactoringUtil.convertMethodReferenceToLambda(psiReference, true, true));
+    private void convertMethodReferencesToLambdasAndStoreLambdas(List<PsiMethodReferenceExpression> java8MethodReferences) {
+        lambdaExpressions = new ArrayList<>();
+        java8MethodReferences.forEach(psiReference -> {
+            lambdaExpressions.add(LambdaRefactoringUtil.convertMethodReferenceToLambda(psiReference, true, true));
+        });
     }
 
 
@@ -227,6 +237,11 @@ public class OptionalQuickFix implements LocalQuickFix {
         PsiExpression newReturnedValue = SERVICE.getInstance(project).createExpressionFromText(methodCallAsText, null);
         PsiElement newMethodCall = PsiUtils.replaceFullyQualifiedNameWithImport(newReturnedValue, project);
         parentElementWhichContainsMethodCallChain.replace(newMethodCall);
+    }
+
+
+    private void convertStoredLambdasBackToMethodReferencesIfPossible() {
+        lambdaExpressions.forEach(LambdaCanBeMethodReferenceInspection::replaceLambdaWithMethodReference);
     }
 
 
