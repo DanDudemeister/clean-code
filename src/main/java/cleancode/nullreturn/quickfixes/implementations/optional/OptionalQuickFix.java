@@ -88,7 +88,6 @@ public class OptionalQuickFix implements LocalQuickFix {
 
         convertStoredLambdasBackToMethodReferencesIfPossible();
 
-        //TODO: add "generated" TODOs
         adaptReturnTypeIfNecessary(project, surroundingMethod);
     }
 
