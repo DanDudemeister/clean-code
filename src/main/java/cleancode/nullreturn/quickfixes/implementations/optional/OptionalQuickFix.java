@@ -275,9 +275,12 @@ public class OptionalQuickFix implements LocalQuickFix {
 
 
     private void adaptReturnTypeIfNecessary(@NotNull Project project, PsiMethod surroundingMethod) {
-        String oldTypeAsText = surroundingMethod.getReturnTypeElement().getType().getPresentableText();
-        if (!oldTypeAsText.matches(JAVA_UTIL_OPTIONAL_SHORTENED_REGEX)) {
-            String newTypeAsText = StringUtils.insertStringIntoTemplate(oldTypeAsText, OPTIONAL_TEMPLATE);
+        PsiType currentReturnType = surroundingMethod.getReturnTypeElement().getType();
+        String currentTypeAsText = currentReturnType.getCanonicalText();
+
+        if (!currentTypeAsText.matches(JAVA_UTIL_OPTIONAL_FULL_QUALIFIED_REGEX)) {
+            String presentableType = currentReturnType.getPresentableText();
+            String newTypeAsText = StringUtils.insertStringIntoTemplate(presentableType, OPTIONAL_TEMPLATE);
             PsiType newPsiType = SERVICE.getInstance(project).createTypeByFQClassName(newTypeAsText);
             PsiElement newReturnType = SERVICE.getInstance(project).createTypeElement(newPsiType);
             surroundingMethod.getReturnTypeElement().replace(newReturnType);
