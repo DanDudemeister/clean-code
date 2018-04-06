@@ -2,9 +2,12 @@ package cleancode.nullreturn.detectors.implementations;
 
 import cleancode.nullreturn.detectors.NullDetector;
 import cleancode.utils.PsiUtils;
-import com.intellij.psi.*;
-import com.intellij.psi.impl.source.tree.java.PsiIdentifierImpl;
-
+import com.intellij.psi.PsiDeclarationStatement;
+import com.intellij.psi.PsiElement;
+import com.intellij.psi.PsiExpression;
+import com.intellij.psi.PsiIdentifier;
+import com.intellij.psi.PsiMethod;
+import com.intellij.psi.PsiType;
 import java.util.Arrays;
 import java.util.List;
 import java.util.Optional;
@@ -37,7 +40,7 @@ public class NullDeclarationDetector extends NullDetector {
     private List<String> getVariableNamesFromDeclaration() {
         return Arrays.stream(statement.getDeclaredElements())
                 .flatMap(declaredElement -> Arrays.stream(declaredElement.getChildren()))
-                .filter(psiElement -> psiElement instanceof PsiIdentifierImpl)
+                .filter(psiElement -> psiElement instanceof PsiIdentifier)
                 .map(PsiElement::getText)
                 .collect(Collectors.toList());
     }

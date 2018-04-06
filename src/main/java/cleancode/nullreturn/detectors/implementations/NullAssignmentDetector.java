@@ -5,8 +5,8 @@ import cleancode.utils.PsiUtils;
 import com.intellij.psi.PsiAssignmentExpression;
 import com.intellij.psi.PsiExpression;
 import com.intellij.psi.PsiMethod;
+import com.intellij.psi.PsiReferenceExpression;
 import com.intellij.psi.PsiType;
-import com.intellij.psi.impl.source.tree.java.PsiReferenceExpressionImpl;
 
 public class NullAssignmentDetector extends NullDetector {
 
@@ -31,9 +31,8 @@ public class NullAssignmentDetector extends NullDetector {
     private String getVariableNameFromAssignment() {
         PsiExpression leftExpression = assignmentExpression.getLExpression();
 
-        //TODO linke Seite Arrayzugriff?
-        if (leftExpression instanceof PsiReferenceExpressionImpl) {
-            return ((PsiReferenceExpressionImpl) leftExpression).getReferenceName();
+        if (leftExpression instanceof PsiReferenceExpression) {
+            return ((PsiReferenceExpression) leftExpression).getReferenceName();
         }
 
         return "";
