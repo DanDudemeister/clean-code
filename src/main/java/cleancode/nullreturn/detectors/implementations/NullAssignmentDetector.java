@@ -40,7 +40,7 @@ public class NullAssignmentDetector extends NullDetector {
 
 
     private boolean isNullAssigned() {
-        PsiExpression assignedValue = PsiUtils.getAssignedValueRecursively(assignmentExpression.getRExpression());
+        PsiExpression assignedValue = PsiUtils.getAssignedExpressionRecursively(assignmentExpression.getRExpression());
         return assignedValue != null && PsiType.NULL.equals(assignedValue.getType());
     }
 }

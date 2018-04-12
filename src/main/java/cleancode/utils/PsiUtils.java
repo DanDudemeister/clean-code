@@ -65,7 +65,7 @@ public class PsiUtils {
 
             } else if (element instanceof PsiAssignmentExpression) {
                 expression = Optional.of(
-                    getAssignedValueRecursively(((PsiAssignmentExpression) element).getRExpression()));
+                    getAssignedExpressionRecursively(((PsiAssignmentExpression) element).getRExpression()));
 
             } else if (element instanceof PsiDeclarationStatement) {
                 expression = getAssignedValueFromDeclaration((PsiDeclarationStatement) element);
@@ -76,9 +76,9 @@ public class PsiUtils {
     }
 
 
-    public static PsiExpression getAssignedValueRecursively(PsiExpression expression) {
+    public static PsiExpression getAssignedExpressionRecursively(PsiExpression expression) {
         if (expression instanceof PsiAssignmentExpression) {
-            return getAssignedValueRecursively(((PsiAssignmentExpression) expression).getRExpression());
+            return getAssignedExpressionRecursively(((PsiAssignmentExpression) expression).getRExpression());
         } else {
             return expression;
         }
