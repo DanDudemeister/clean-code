@@ -74,8 +74,8 @@ public class OptionalQuickFix implements LocalQuickFix {
 
         Collection<PsiReturnStatement> allReturnStatements = findAllReturnStatementsOfMethod(surroundingMethod);
 
-        List<PsiExpression> assignedOrReturnedValues = getAssignedOrReturnedValues(allReturnStatements);
-        replaceAllReturnedValuesWithOptionalIfNecessary(project, assignedOrReturnedValues);
+        List<PsiExpression> assignedOrReturnedExpressions = getAssignedOrReturnedExpressions(allReturnStatements);
+        replaceAllReturnedExpressionsWithOptionalIfNecessary(project, assignedOrReturnedExpressions);
 
         Collection<PsiReference> usagesOfMethod = PsiUtils.findUsagesOfMethod(surroundingMethod);
 
@@ -96,7 +96,7 @@ public class OptionalQuickFix implements LocalQuickFix {
     }
 
 
-    private List<PsiExpression> getAssignedOrReturnedValues(Collection<PsiReturnStatement> allReturnStatements) {
+    private List<PsiExpression> getAssignedOrReturnedExpressions(Collection<PsiReturnStatement> allReturnStatements) {
         return allReturnStatements.stream()
             .map(PsiUtils::getAssignedOrReturnedExpressionFromElement)
             .map(optionalPsiExpression -> optionalPsiExpression.orElse(null))
@@ -113,7 +113,7 @@ public class OptionalQuickFix implements LocalQuickFix {
     }
 
 
-    private void replaceAllReturnedValuesWithOptionalIfNecessary(@NotNull Project project, List<PsiExpression> assignedOrReturnedValues) {
+    private void replaceAllReturnedExpressionsWithOptionalIfNecessary(@NotNull Project project, List<PsiExpression> assignedOrReturnedValues) {
         assignedOrReturnedValues.forEach(returnedValue -> {
             if (returnedValue.getType() != null && !returnedValue.getType().getCanonicalText().matches(JAVA_UTIL_OPTIONAL_FULL_QUALIFIED_REGEX)) {
                 String returnedValueAsText = getReturnedValueAsText(returnedValue);
