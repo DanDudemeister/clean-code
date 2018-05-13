@@ -43,7 +43,7 @@ public class OptionalQuickFix implements LocalQuickFix {
     private static final String QUICK_FIX_NAME = "Replace null with optional";
     private static final String NULL = "null";
     private static final String JAVA_UTIL_OPTIONAL_FULL_QUALIFIED_REGEX = "^(java.util.Optional<).*(>)$";
-    private static final String OF_TEMPLATE = "java.util.Optional.of(" + StringUtils.PLACEHOLDER + ")";
+    private static final String OF_NULLABLE_TEMPLATE = "java.util.Optional.ofNullable(" + StringUtils.PLACEHOLDER + ")";
     private static final String JAVA_UTIL_OPTIONAL_EMPTY = "java.util.Optional.empty()";
     private static final String OPTIONAL_TEMPLATE = "Optional<" + StringUtils.PLACEHOLDER + ">";
     private static final String OR_ELSE_NULL = ".orElse(null)";
@@ -131,7 +131,7 @@ public class OptionalQuickFix implements LocalQuickFix {
         if (NULL.equals(returnedValueAsText)) {
             returnedValueAsText = JAVA_UTIL_OPTIONAL_EMPTY;
         } else {
-            returnedValueAsText = StringUtils.insertStringIntoTemplate(returnedValueAsText, OF_TEMPLATE);
+            returnedValueAsText = StringUtils.insertStringIntoTemplate(returnedValueAsText, OF_NULLABLE_TEMPLATE);
         }
 
         return returnedValueAsText;
