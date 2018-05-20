@@ -1,5 +1,7 @@
 package cleancode.nullreturn.quickfixes;
 
+import cleancode.nullreturn.quickfixes.implementations.arrays.EmptyArrayQuickFix;
+import cleancode.nullreturn.quickfixes.implementations.collections.EmptyIteratorQuickFix;
 import cleancode.nullreturn.quickfixes.implementations.collections.EmptyListQuickFix;
 import cleancode.nullreturn.quickfixes.implementations.optional.OptionalQuickFix;
 import cleancode.nullreturn.quickfixes.implementations.string.EmptyStringQuickFix;
@@ -16,9 +18,11 @@ import java.util.Optional;
 public class QuickFixFactory {
 
     private static final String JAVA_LANG_STRING = "java.lang.String";
-    private static final String JAVA_UTIL_LIST_REGEX = "^(java.util.List<).*(>)$";
-    private static final String JAVA_UTIL_MAP_REGEX = "^(java.util.Map<).*(>)$";
-    private static final String JAVA_UTIL_SET_REGEX = "^(java.util.Set<).*(>)$";
+    private static final String JAVA_UTIL_LIST_REGEX = "^(java.util.List)(<.*>)?$";
+    private static final String JAVA_UTIL_MAP_REGEX = "^(java.util.Map)(<.*>)?$";
+    private static final String JAVA_UTIL_SET_REGEX = "^(java.util.Set)(<.*>)?$";
+    private static final String JAVA_UTIL_ITERATOR_REGEX = "^(java.util.Iterator)(<.*>)?$";
+    private static final String ARRAY_REGEX = "^.*(\\[])+$";
 
 
     public static Optional<LocalQuickFix> getQuickFix(PsiElement psiElement) {
@@ -41,6 +45,12 @@ public class QuickFixFactory {
 
             } else if (returnTypeAsText.matches(JAVA_UTIL_SET_REGEX)) {
                 return Optional.of(new EmptySetQuickFix());
+
+            } else if (returnTypeAsText.matches(JAVA_UTIL_ITERATOR_REGEX)) {
+                return Optional.of(new EmptyIteratorQuickFix());
+
+            } else if (returnTypeAsText.matches(ARRAY_REGEX)) {
+                return Optional.of(new EmptyArrayQuickFix());
 
             } else {
                 return Optional.of(new OptionalQuickFix());
