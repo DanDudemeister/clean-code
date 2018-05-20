@@ -56,7 +56,7 @@ public class EmptyArrayQuickFix implements LocalQuickFix {
     private String createArrayExpressionAsTextFromReturnType(String returnType) {
         String delimiter = "0]";
         String[] stringParts = returnType.split("]");
-        return "new  " + String.join(delimiter, stringParts) + delimiter;
+        return "new " + String.join(delimiter, stringParts) + delimiter;
     }
 
 
