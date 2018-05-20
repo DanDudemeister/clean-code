@@ -28,10 +28,40 @@ public class EmptyArrayQuickFix implements LocalQuickFix {
         return getName();
     }
 
+
     @Override
     public void applyFix(@NotNull Project project, @NotNull ProblemDescriptor problemDescriptor) {
         PsiElement psiElement = problemDescriptor.getPsiElement();
-        String returnType = getReturnTypeFromPsiElement(psiElement);
+        Optional<String> optionalReturnType = getReturnTypeFromPsiElement(psiElement);
+
+        optionalReturnType.ifPresent(returnType -> {
+            replaceNullWithEmptyArray(project, psiElement, returnType);
+        });
+    }
+
+
+    @NotNull
+    private Optional<String> getReturnTypeFromPsiElement(PsiElement psiElement) {
+        PsiMethod surroundingMethod = PsiUtils.findSurroundingMethod(psiElement);
+
+        if (surroundingMethod.getReturnType() != null) {
+            return Optional.of(surroundingMethod.getReturnType().getPresentableText());
+        }
+
+        return Optional.empty();
+    }
+
+
+    @NotNull
+    private String createArrayExpressionAsTextFromReturnType(String returnType) {
+        String delimiter = "0]";
+        String[] stringParts = returnType.split("]");
+        return "new  " + String.join(delimiter, stringParts) + delimiter;
+    }
+
+
+    private void replaceNullWithEmptyArray(@NotNull Project project, PsiElement psiElement,
+        String returnType) {
         String newArrayExpressionAsText = createArrayExpressionAsTextFromReturnType(returnType);
 
         PsiExpression emptyArrayExpression = PsiElementFactory.SERVICE.getInstance(project)
@@ -39,18 +69,5 @@ public class EmptyArrayQuickFix implements LocalQuickFix {
         Optional<PsiExpression> assignedOrReturnedExpression = PsiUtils.getAssignedOrReturnedExpressionFromElement(psiElement);
 
         assignedOrReturnedExpression.ifPresent(expression -> expression.replace(emptyArrayExpression));
-    }
-
-    @NotNull
-    private String getReturnTypeFromPsiElement(PsiElement psiElement) {
-        PsiMethod surroundingMethod = PsiUtils.findSurroundingMethod(psiElement);
-        return surroundingMethod.getReturnType().getPresentableText();
-    }
-
-    @NotNull
-    private String createArrayExpressionAsTextFromReturnType(String returnType) {
-        String delimiter = "0]";
-        String[] stringParts = returnType.split("]");
-        return "new  " + String.join(delimiter, stringParts) + delimiter;
     }
 }
