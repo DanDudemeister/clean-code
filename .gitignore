@@ -2,3 +2,6 @@
 /.gradle/
 /build/
 /out/
+/clean-code.iml
+/clean-code.ipr
+/clean-code.iws
