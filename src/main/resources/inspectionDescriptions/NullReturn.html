@@ -9,7 +9,11 @@
         </p>
         <br>
         <p>
-            In case that the return type of the concerned method is <code>List</code>, <code>Map</code> or <code>Set</code>, the proposed QuickFix will replace returned <code>null</code>-values with an empty collection, so make sure that the places where the method is called doesn't depend on the value being <code>null</code> und doesn't intend to make any modifications to the returned collection.
+            In case that the return type of the concerned method is <code>List</code>, <code>Map</code>, <code>Set</code> oder <code>Iterator</code>, the proposed QuickFix will replace returned <code>null</code>-values with an empty collection, so make sure that the places where the method is called doesn't depend on the value being <code>null</code> und doesn't intend to make any modifications to the returned collection.
+        </p>
+        <br>
+        <p>
+            In case that the concerned method returns an array, the proposed QuickFix will replace returned <code>null</code>-values with an empty array, so make sure that the places where the method is called doesn't depend on the value being <code>null</code>.
         </p>
         <br>
         <p>

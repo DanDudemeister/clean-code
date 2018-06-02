@@ -40,7 +40,7 @@ import org.jetbrains.annotations.NotNull;
 
 public class OptionalQuickFix implements LocalQuickFix {
 
-    private static final String QUICK_FIX_NAME = "Replace null with optional";
+    private static final String QUICK_FIX_NAME = "Replace null with Optional";
     private static final String NULL = "null";
     private static final String JAVA_UTIL_OPTIONAL_FULL_QUALIFIED_REGEX = "^(java.util.Optional<).*(>)$";
     private static final String OF_NULLABLE_TEMPLATE = "java.util.Optional.ofNullable(" + StringUtils.PLACEHOLDER + ")";
