@@ -1,12 +1,6 @@
 package cleancode.nullreturn.quickfixes;
 
-import cleancode.nullreturn.quickfixes.implementations.arrays.EmptyArrayQuickFix;
-import cleancode.nullreturn.quickfixes.implementations.collections.EmptyIteratorQuickFix;
-import cleancode.nullreturn.quickfixes.implementations.collections.EmptyListQuickFix;
 import cleancode.nullreturn.quickfixes.implementations.optional.OptionalQuickFix;
-import cleancode.nullreturn.quickfixes.implementations.string.EmptyStringQuickFix;
-import cleancode.nullreturn.quickfixes.implementations.collections.EmptyMapQuickFix;
-import cleancode.nullreturn.quickfixes.implementations.collections.EmptySetQuickFix;
 import cleancode.utils.PsiUtils;
 import com.intellij.codeInspection.LocalQuickFix;
 import com.intellij.psi.PsiElement;
@@ -17,14 +11,6 @@ import java.util.Optional;
 
 public class QuickFixFactory {
 
-    private static final String JAVA_LANG_STRING = "java.lang.String";
-    private static final String JAVA_UTIL_LIST_REGEX = "^(java.util.List)(<.*>)?$";
-    private static final String JAVA_UTIL_MAP_REGEX = "^(java.util.Map)(<.*>)?$";
-    private static final String JAVA_UTIL_SET_REGEX = "^(java.util.Set)(<.*>)?$";
-    private static final String JAVA_UTIL_ITERATOR_REGEX = "^(java.util.Iterator)(<.*>)?$";
-    private static final String ARRAY_REGEX = "^.*(\\[])+$";
-
-
     public static Optional<LocalQuickFix> getQuickFix(PsiElement psiElement) {
         Optional<LocalQuickFix> quickFix = Optional.empty();
 
@@ -32,29 +18,7 @@ public class QuickFixFactory {
         PsiType returnType = surroundingMethod.getReturnType();
 
         if (returnType != null) {
-            String returnTypeAsText = returnType.getCanonicalText(false);
-
-            if (returnTypeAsText.equals(JAVA_LANG_STRING)) {
-                return Optional.of(new EmptyStringQuickFix());
-
-            } else if (returnTypeAsText.matches(JAVA_UTIL_LIST_REGEX)) {
-                return Optional.of(new EmptyListQuickFix());
-
-            } else if (returnTypeAsText.matches(JAVA_UTIL_MAP_REGEX)) {
-                return Optional.of(new EmptyMapQuickFix());
-
-            } else if (returnTypeAsText.matches(JAVA_UTIL_SET_REGEX)) {
-                return Optional.of(new EmptySetQuickFix());
-
-            } else if (returnTypeAsText.matches(JAVA_UTIL_ITERATOR_REGEX)) {
-                return Optional.of(new EmptyIteratorQuickFix());
-
-            } else if (returnTypeAsText.matches(ARRAY_REGEX)) {
-                return Optional.of(new EmptyArrayQuickFix());
-
-            } else {
-                return Optional.of(new OptionalQuickFix());
-            }
+            return Optional.of(new OptionalQuickFix());
         }
 
         return quickFix;

@@ -5,19 +5,7 @@
         </p>
         <br>
         <p>
-            In case that the return type of the concerned method is <code>String</code>, the proposed QuickFix will replace returned <code>null</code>-values with an empty string, so make sure that the places where the method is called doesn't depend on the value being <code>null</code>.
-        </p>
-        <br>
-        <p>
-            In case that the return type of the concerned method is <code>List</code>, <code>Map</code>, <code>Set</code> oder <code>Iterator</code>, the proposed QuickFix will replace returned <code>null</code>-values with an empty collection, so make sure that the places where the method is called doesn't depend on the value being <code>null</code> und doesn't intend to make any modifications to the returned collection.
-        </p>
-        <br>
-        <p>
-            In case that the concerned method returns an array, the proposed QuickFix will replace returned <code>null</code>-values with an empty array, so make sure that the places where the method is called doesn't depend on the value being <code>null</code>.
-        </p>
-        <br>
-        <p>
-            In case that the return type of the concerned method is any other kind of data type, the proposed QuickFix will wrap the returned values with an <code>Optional</code> and all places where the method is called will have an added <code>.orElse(null)</code> so that the behaviour remains the same. Please visit these places afterwards to think of how you want to handle an empty <code>Optional</code>.
+            The proposed QuickFix will wrap the returned values with an <code>Optional</code> and all places where the method is called will have an added <code>.orElse(null)</code> so that the behaviour remains the same. Please visit these places afterwards to think of how you want to handle an empty <code>Optional</code>.
         </p>
         <!-- tooltip end -->
         <!--Text after this comment will only be shown in the settings of the inspection.-->
